@@ -2,27 +2,32 @@ package com.loplyy.subscriber_service.entity;
 
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.UUID;
 
 @Table(name = "Subscriber_Playlist")
-public class Playlist {
+public class SubscriberPlaylist {
 
     @Id
     private long id;
     private UUID uuid;
+    @Column("music_id")
     private int musicId;
-
+    @Column("subscriber_id")
+    private long subscriberId;
+    @Column("is_public")
     private boolean isPublic;
 
-    public Playlist() {
+    public SubscriberPlaylist() {
     }
 
-    public Playlist(long id, UUID uuid, int musicId, boolean isPublic) {
+    public SubscriberPlaylist(long id, UUID uuid, int musicId, long subscriberId, boolean isPublic) {
         this.id = id;
         this.uuid = uuid;
         this.musicId = musicId;
+        this.subscriberId = subscriberId;
         this.isPublic = isPublic;
     }
 
@@ -58,4 +63,11 @@ public class Playlist {
         isPublic = aPublic;
     }
 
+    public long getSubscriberId() {
+        return subscriberId;
+    }
+
+    public void setSubscriberId(long subscriberId) {
+        this.subscriberId = subscriberId;
+    }
 }
