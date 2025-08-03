@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: subscriber-service
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/lopply
+    username: postgres
+    password: test
+    initialization-mode: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+
+server:
+  port: 8083
