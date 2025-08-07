@@ -12,9 +12,8 @@ public class SubscriberPlaylist {
 
     @Id
     private long id;
+    @Column("uuid")
     private UUID uuid;
-    @Column("music_id")
-    private int musicId;
     @Column("subscriber_id")
     private long subscriberId;
     @Column("is_public")
@@ -23,12 +22,17 @@ public class SubscriberPlaylist {
     public SubscriberPlaylist() {
     }
 
-    public SubscriberPlaylist(long id, UUID uuid, int musicId, long subscriberId, boolean isPublic) {
+    public SubscriberPlaylist(long id, UUID uuid, long subscriberId, boolean isPublic) {
         this.id = id;
         this.uuid = uuid;
-        this.musicId = musicId;
         this.subscriberId = subscriberId;
         this.isPublic = isPublic;
+    }
+
+    public SubscriberPlaylist(boolean isPublic, long subscriberId) {
+        this.uuid = UUID.randomUUID();
+        this.isPublic = isPublic;
+        this.subscriberId = subscriberId;
     }
 
     public long getId() {
@@ -45,14 +49,6 @@ public class SubscriberPlaylist {
 
     public void setUuid(UUID uuid) {
         this.uuid = UUID.randomUUID();
-    }
-
-    public int getMusicId() {
-        return musicId;
-    }
-
-    public void setMusicId(int musicId) {
-        this.musicId = musicId;
     }
 
     public boolean isPublic() {

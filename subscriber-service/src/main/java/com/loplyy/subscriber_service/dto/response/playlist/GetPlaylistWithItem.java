@@ -1,21 +1,27 @@
 package com.loplyy.subscriber_service.dto.response.playlist;
 
+import com.loplyy.subscriber_service.dto.response.playlistItem.GetPlaylistItem;
+import org.springframework.data.relational.core.mapping.Column;
+
+import java.util.List;
 import java.util.UUID;
 
-public class GetSubscriberPlaylistResponse {
+public class GetPlaylistWithItem {
     private long id;
     private UUID uuid;
     private long subscriberId;
     private boolean isPublic;
+    private List<GetPlaylistItem> getPlaylistItemList;
 
-    public GetSubscriberPlaylistResponse() {
+    public GetPlaylistWithItem() {
     }
 
-    public GetSubscriberPlaylistResponse(long id, UUID uuid, long subscriberId, boolean isPublic) {
+    public GetPlaylistWithItem(long id, UUID uuid, long subscriberId, boolean isPublic, List<GetPlaylistItem> getPlaylistItemList) {
         this.id = id;
         this.uuid = uuid;
         this.subscriberId = subscriberId;
         this.isPublic = isPublic;
+        this.getPlaylistItemList = getPlaylistItemList;
     }
 
     public long getId() {
@@ -48,5 +54,13 @@ public class GetSubscriberPlaylistResponse {
 
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;
+    }
+
+    public List<GetPlaylistItem> getGetPlaylistItemList() {
+        return getPlaylistItemList;
+    }
+
+    public void setGetPlaylistItemList(List<GetPlaylistItem> getPlaylistItemList) {
+        this.getPlaylistItemList = getPlaylistItemList;
     }
 }

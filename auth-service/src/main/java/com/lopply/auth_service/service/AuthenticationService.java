@@ -39,7 +39,7 @@ public class AuthenticationService {
         User savedUser =  userRepository.save(user);
         Map<String, Object> claims = new HashMap<>();
         claims.put("UUID", savedUser.getUuid());
-        claims.put("SubscriberId", savedUser.getId());
+        claims.put("account_id", savedUser.getId());
         return new RegisterResponse(savedUser.getEmail(), savedUser.getPassword());
 
     }
@@ -58,7 +58,7 @@ public class AuthenticationService {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("UUID", user.getUuid());
-        claims.put("SubscriberId", user.getId());
+        claims.put("account_id", user.getId());
         String jwtToken = jwtService.generateToken(claims, user);
 
         return new LoginResponse(jwtToken, user.getId());
