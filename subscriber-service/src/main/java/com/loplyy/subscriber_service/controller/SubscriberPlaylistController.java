@@ -45,10 +45,10 @@ public class SubscriberPlaylistController {
         );
     }
 
-    @DeleteMapping("/delete-playlist")
-    public Mono<ResponseEntity<Mono<Void>>> deletePlaylist(@RequestParam("playlistUId") String playlistUId, ServerWebExchange exchange) {
-
-    }
+//    @DeleteMapping("/delete-playlist")
+//    public Mono<ResponseEntity<Mono<Void>>> deletePlaylist(@RequestParam("playlistUId") String playlistUId, ServerWebExchange exchange) {
+//
+//    }
 
     @PostMapping("/create-playlist")
     public Mono<ResponseEntity<Void>> createPlaylist(@RequestBody CreatePlaylistRequest createPlaylistRequest, ServerWebExchange serverWebExchange) {
