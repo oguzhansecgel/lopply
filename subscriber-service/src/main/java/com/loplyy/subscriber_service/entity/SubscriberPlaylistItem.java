@@ -13,7 +13,7 @@ public class SubscriberPlaylistItem {
     private long id;
 
     @Column("uuid")
-    private UUID uid;
+    private UUID uid = UUID.randomUUID();
 
     @Column("music_id")
     private long musicId;
@@ -44,7 +44,7 @@ public class SubscriberPlaylistItem {
     }
 
     public void setUid(UUID uid) {
-        this.uid = uid;
+        this.uid = UUID.randomUUID();
     }
 
     public long getMusicId() {

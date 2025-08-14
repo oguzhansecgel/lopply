@@ -5,11 +5,13 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Table("album")
 public class Album {
     @Id
     private Long id;
+    private UUID uuid;
     private String title;
     @Column("artist_id")
     private Long artistId;
@@ -19,11 +21,20 @@ public class Album {
     public Album() {
     }
 
-    public Album(Long id, String title, Long artistId, LocalDate releaseDate) {
+    public Album(Long id, UUID uuid, String title, Long artistId, LocalDate releaseDate) {
         this.id = id;
+        this.uuid = uuid;
         this.title = title;
         this.artistId = artistId;
         this.releaseDate = releaseDate;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public Long getId() {

@@ -3,10 +3,13 @@ package com.lopply.music_service.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.util.UUID;
+
 @Table("artist")
 public class Artist {
     @Id
     private Long id;
+    private UUID uuid;
     private String name;
     private String bio;
     private String country;
@@ -14,11 +17,20 @@ public class Artist {
     public Artist() {
     }
 
-    public Artist(Long id, String name, String bio, String country) {
+    public Artist(Long id, UUID uuid, String name, String bio, String country) {
         this.id = id;
+        this.uuid = uuid;
         this.name = name;
         this.bio = bio;
         this.country = country;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public Long getId() {

@@ -1,14 +1,10 @@
-package com.lopply.music_service.entity;
+package com.lopply.music_service.dto.response.music;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.UUID;
 
-@Table("music")
-public class Music {
-    @Id
+public class GetByUIdMusic {
     private Long id;
     private UUID uuid;
     private String title;
@@ -21,10 +17,10 @@ public class Music {
     private Integer duration; // saniye
     private String language;
 
-    public Music() {
+    public GetByUIdMusic() {
     }
 
-    public Music(Long id, UUID uuid, String title, Long albumId, Long artistId, Long genreId, Integer duration, String language) {
+    public GetByUIdMusic(Long id, UUID uuid, String title, Long albumId, Long artistId, Long genreId, Integer duration, String language) {
         this.id = id;
         this.uuid = uuid;
         this.title = title;
@@ -48,7 +44,7 @@ public class Music {
     }
 
     public void setUuid(UUID uuid) {
-        this.uuid = UUID.randomUUID();
+        this.uuid = uuid;
     }
 
     public String getTitle() {

@@ -3,18 +3,30 @@ package com.lopply.music_service.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.util.UUID;
+
 @Table("genre")
 public class Genre {
     @Id
     private Long id;
+    private UUID uuid;
     private String name;
 
     public Genre() {
     }
 
-    public Genre(Long id, String name) {
+    public Genre(Long id, UUID uuid, String name) {
         this.id = id;
+        this.uuid = uuid;
         this.name = name;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public Long getId() {

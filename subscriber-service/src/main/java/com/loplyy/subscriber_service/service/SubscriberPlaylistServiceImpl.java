@@ -2,6 +2,7 @@ package com.loplyy.subscriber_service.service;
 
 import com.loplyy.subscriber_service.client.Auth.AuthServiceClient;
 import com.loplyy.subscriber_service.client.Auth.GetSubscriberIdByUid;
+import com.loplyy.subscriber_service.client.Music.MusicServiceClient;
 import com.loplyy.subscriber_service.dto.request.playlist.CreatePlaylistItemRequest;
 import com.loplyy.subscriber_service.dto.request.playlist.CreatePlaylistRequest;
 import com.loplyy.subscriber_service.dto.response.playlist.GetPlaylistWithItem;
@@ -12,6 +13,8 @@ import com.loplyy.subscriber_service.entity.SubscriberPlaylistItem;
 import com.loplyy.subscriber_service.repository.SubscriberPlaylistItemRepository;
 import com.loplyy.subscriber_service.repository.SubscriberPlaylistRepository;
 import com.loplyy.subscriber_service.repository.SubscriberRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,12 +28,18 @@ public class SubscriberPlaylistServiceImpl {
     private final SubscriberPlaylistItemRepository subscriberPlaylistItemRepository;
     private final SubscriberRepository  subscriberRepository;
     private final AuthServiceClient authServiceClient;
-
-    public SubscriberPlaylistServiceImpl(SubscriberPlaylistRepository subscriberPlaylistRepository, SubscriberPlaylistItemRepository subscriberPlaylistItemRepository, SubscriberRepository subscriberRepository, AuthServiceClient authServiceClient) {
+    private final MusicServiceClient musicServiceClient;
+    private Logger logger = LoggerFactory.getLogger(SubscriberPlaylistServiceImpl.class);
+    public SubscriberPlaylistServiceImpl(SubscriberPlaylistRepository subscriberPlaylistRepository,
+                                         SubscriberPlaylistItemRepository subscriberPlaylistItemRepository,
+                                         SubscriberRepository subscriberRepository,
+                                         AuthServiceClient authServiceClient,
+                                         MusicServiceClient musicServiceClient) {
         this.subscriberPlaylistRepository = subscriberPlaylistRepository;
         this.subscriberPlaylistItemRepository = subscriberPlaylistItemRepository;
         this.subscriberRepository = subscriberRepository;
         this.authServiceClient = authServiceClient;
+        this.musicServiceClient = musicServiceClient;
     }
 
     public Flux<GetSubscriberPlaylistResponse> getAllSubscriberPlaylists() {
@@ -74,6 +83,8 @@ public class SubscriberPlaylistServiceImpl {
     }
 
     public Mono<Void> createSubscriberPlaylist(CreatePlaylistRequest request, String accountUId) {
+        logger.info("createSubscriberPlaylist incoming request {}", request.toString());
+
         return authServiceClient.getUserIdByUid(UUID.fromString(accountUId))
                 .flatMap(accountIdDto ->
                         subscriberRepository.getSubscriberByAccountId(accountIdDto.getId())
@@ -90,12 +101,22 @@ public class SubscriberPlaylistServiceImpl {
     }
 
     public Mono<Void> addPlaylistItem(CreatePlaylistItemRequest request) {
-       return subscriberPlaylistRepository.getPlaylistIdByUuid(UUID.fromString(request.getPlaylist_uid()))
-                .flatMap(playlistId -> {
-                    SubscriberPlaylistItem item  = new SubscriberPlaylistItem();
-                    item.setPlaylistId(playlistId.getId());
-                // TODO Music service yazılacak
-                    return subscriberPlaylistItemRepository.save(item);
-                }).then();
+        logger.info("addPlaylistItem incoming request {}, {}", request.getPlaylist_uid(), request.getMusic_uid());
+
+        return musicServiceClient.getByUIdMusic(request.getMusic_uid())
+                .flatMap(getByUIdMusic ->
+                        subscriberPlaylistRepository.getPlaylistIdByUuid(UUID.fromString(request.getPlaylist_uid()))
+                                .next()
+                                .switchIfEmpty(Mono.error(new RuntimeException("Playlist not found")))
+                                .flatMap(playlistId -> {
+                                    SubscriberPlaylistItem item = new SubscriberPlaylistItem();
+                                    item.setPlaylistId(playlistId.getId());
+                                    item.setMusicId(getByUIdMusic.getId());
+                                    return subscriberPlaylistItemRepository.save(item);
+                                })
+                )
+                .doOnSuccess(v -> logger.info("Playlist item successfully added"))
+                .doOnError(e -> logger.error("Failed to add playlist item", e))
+                .then();
     }
 }

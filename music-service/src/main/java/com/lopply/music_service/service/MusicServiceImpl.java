@@ -1,12 +1,15 @@
 package com.lopply.music_service.service;
 
 import com.lopply.music_service.dto.request.music.CreateMusicRequest;
+import com.lopply.music_service.dto.response.music.GetByUIdMusic;
 import com.lopply.music_service.entity.Music;
 import com.lopply.music_service.repository.MusicRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import java.util.UUID;
 
 @Service
 public class MusicServiceImpl {
@@ -32,5 +35,21 @@ public class MusicServiceImpl {
         return musicRepository.save(music)
                 .doOnNext(savedMusic -> {logger.info("music saved {}", savedMusic);})
                 .then();
+    }
+
+    public Mono<GetByUIdMusic> getByUIdMusic(String uuid) {
+        logger.info("Incoming get music by uid {}", uuid);
+        return musicRepository.findByUuid(UUID.fromString(uuid))
+                .map(music ->
+                        new GetByUIdMusic(
+                                music.getId(),
+                                music.getUuid(),
+                                music.getTitle(),
+                                music.getAlbumId(),
+                                music.getArtistId(),
+                                music.getGenreId(),
+                                music.getDuration(),
+                                music.getLanguage()
+                        ));
     }
 }

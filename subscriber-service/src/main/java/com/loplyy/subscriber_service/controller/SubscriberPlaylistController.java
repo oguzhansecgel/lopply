@@ -1,6 +1,7 @@
 package com.loplyy.subscriber_service.controller;
 
 import com.loplyy.subscriber_service.config.JwtService;
+import com.loplyy.subscriber_service.dto.request.playlist.CreatePlaylistItemRequest;
 import com.loplyy.subscriber_service.dto.request.playlist.CreatePlaylistRequest;
 import com.loplyy.subscriber_service.dto.response.playlist.GetPlaylistWithItem;
 import com.loplyy.subscriber_service.dto.response.playlist.GetSubscriberPlaylistResponse;
@@ -53,7 +54,6 @@ public class SubscriberPlaylistController {
     @PostMapping("/create-playlist")
     public Mono<ResponseEntity<Void>> createPlaylist(@RequestBody CreatePlaylistRequest createPlaylistRequest, ServerWebExchange serverWebExchange) {
         //TODO requestten isPublic alanı false geliyor.
-        logger.info("incoming request for create playlist {}",createPlaylistRequest.isPublic());
         String authHeader = serverWebExchange.getRequest().getHeaders().getFirst("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -71,6 +71,12 @@ public class SubscriberPlaylistController {
 
         String uuid = claims.get("UUID", String.class);
         return subscriberPlaylistService.createSubscriberPlaylist(createPlaylistRequest, uuid)
+                .then(Mono.just(ResponseEntity.ok().build()));
+    }
+
+    @PostMapping("/create-playlist-item")
+    public Mono<ResponseEntity<Void>> createPlaylistItem(@RequestBody CreatePlaylistItemRequest createPlaylistItemRequest, ServerWebExchange serverWebExchange) {
+        return subscriberPlaylistService.addPlaylistItem(createPlaylistItemRequest)
                 .then(Mono.just(ResponseEntity.ok().build()));
     }
 }
