@@ -2,11 +2,13 @@ package com.loplyy.subscriber_service.service;
 
 import com.loplyy.subscriber_service.client.Auth.AuthServiceClient;
 import com.loplyy.subscriber_service.client.Auth.GetSubscriberIdByUid;
+import com.loplyy.subscriber_service.dto.request.playlist.CreatePlaylistItemRequest;
 import com.loplyy.subscriber_service.dto.request.playlist.CreatePlaylistRequest;
 import com.loplyy.subscriber_service.dto.response.playlist.GetPlaylistWithItem;
 import com.loplyy.subscriber_service.dto.response.playlist.GetSubscriberPlaylistResponse;
 import com.loplyy.subscriber_service.dto.response.playlistItem.GetPlaylistItem;
 import com.loplyy.subscriber_service.entity.SubscriberPlaylist;
+import com.loplyy.subscriber_service.entity.SubscriberPlaylistItem;
 import com.loplyy.subscriber_service.repository.SubscriberPlaylistItemRepository;
 import com.loplyy.subscriber_service.repository.SubscriberPlaylistRepository;
 import com.loplyy.subscriber_service.repository.SubscriberRepository;
@@ -39,6 +41,13 @@ public class SubscriberPlaylistServiceImpl {
                         subscriberPlaylist.getSubscriberId(),
                         subscriberPlaylist.isPublic()
                 ));
+    }
+
+    public Mono<Void> deleteSubscriberPlaylist(String uuid) {
+        return subscriberPlaylistRepository.getPlaylistIdByUuid(UUID.fromString(uuid))
+                .flatMap(playlistId -> {
+                    return subscriberPlaylistRepository.deleteById(playlistId.getId());
+                }).then();
     }
 
     public Mono<GetPlaylistWithItem> getPlaylistWithItem(String playlistUId) {
@@ -78,5 +87,15 @@ public class SubscriberPlaylistServiceImpl {
                                 })
                 )
                 .then();
+    }
+
+    public Mono<Void> addPlaylistItem(CreatePlaylistItemRequest request) {
+       return subscriberPlaylistRepository.getPlaylistIdByUuid(UUID.fromString(request.getPlaylist_uid()))
+                .flatMap(playlistId -> {
+                    SubscriberPlaylistItem item  = new SubscriberPlaylistItem();
+                    item.setPlaylistId(playlistId.getId());
+                // TODO Music service yazılacak
+                    return subscriberPlaylistItemRepository.save(item);
+                }).then();
     }
 }
