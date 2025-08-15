@@ -38,7 +38,6 @@ public class MusicServiceImpl {
     }
 
     public Mono<GetByUIdMusic> getByUIdMusic(String uuid) {
-        logger.info("Incoming get music by uid {}", uuid);
         return musicRepository.findByUuid(UUID.fromString(uuid))
                 .map(music ->
                         new GetByUIdMusic(

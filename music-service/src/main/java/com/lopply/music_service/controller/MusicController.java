@@ -22,25 +22,28 @@ public class MusicController {
     }
 
     @GetMapping("/get-by-uid")
-    public Mono<ResponseEntity<GetByUIdMusic>> getByUid(@RequestParam String uid) {
+    public Mono<ApiResponse<GetByUIdMusic>> getByUid(@RequestParam String uid) {
+        logger.info("Incoming get music by uid {}", uid);
         return musicService.getByUIdMusic(uid)
-                .map(ResponseEntity::ok)
+                .map( music ->
+                        ApiResponse.success(music))
+                .switchIfEmpty(Mono.just(ApiResponse.error()))
                 .onErrorResume(e ->
                         {
                             logger.error("api/music/get-by-uid error {}", e.getMessage());
-                            return Mono.just(ResponseEntity.badRequest().build());
+                            return Mono.just(ApiResponse.error());
                         }
                 );
     }
 
     @PostMapping("/create")
-    public Mono<ResponseEntity<Void>> createMusic(@RequestBody CreateMusicRequest request, ServerWebExchange exchange) {
+    public Mono<ApiResponse<Void>> createMusic(@RequestBody CreateMusicRequest request, ServerWebExchange exchange) {
         return musicService.createMusic(request)
-                .map(ResponseEntity::ok)
+                .map(ApiResponse::success)
                 .onErrorResume(e ->
                         {
                             logger.error("api/music/create error {}", e.getMessage());
-                            return Mono.just(ResponseEntity.badRequest().build());
+                            return Mono.just(ApiResponse.error());
                         }
                 );
     }

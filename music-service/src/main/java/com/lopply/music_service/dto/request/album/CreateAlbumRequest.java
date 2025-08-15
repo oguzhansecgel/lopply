@@ -1,48 +1,24 @@
-package com.lopply.music_service.entity;
+package com.lopply.music_service.dto.request.album;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Table("album")
-public class Album {
-    @Id
-    private Long id;
-    private UUID uuid = UUID.randomUUID();
+public class CreateAlbumRequest {
     private String title;
     @Column("artist_id")
     private Long artistId;
     @Column("release_date")
     private LocalDate releaseDate;
 
-    public Album() {
+    public CreateAlbumRequest() {
     }
 
-    public Album(Long id, UUID uuid, String title, Long artistId, LocalDate releaseDate) {
-        this.id = id;
-        this.uuid = uuid;
+    public CreateAlbumRequest(String title, Long artistId, LocalDate releaseDate) {
         this.title = title;
         this.artistId = artistId;
         this.releaseDate = releaseDate;
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = UUID.randomUUID();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {

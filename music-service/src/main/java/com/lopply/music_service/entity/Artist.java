@@ -9,7 +9,7 @@ import java.util.UUID;
 public class Artist {
     @Id
     private Long id;
-    private UUID uuid;
+    private UUID uuid = UUID.randomUUID();
     private String name;
     private String bio;
     private String country;
@@ -30,7 +30,7 @@ public class Artist {
     }
 
     public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+        this.uuid = UUID.randomUUID();
     }
 
     public Long getId() {

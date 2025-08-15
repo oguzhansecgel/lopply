@@ -9,7 +9,7 @@ import java.util.UUID;
 public class Genre {
     @Id
     private Long id;
-    private UUID uuid;
+    private UUID uuid = UUID.randomUUID();
     private String name;
 
     public Genre() {
@@ -26,7 +26,7 @@ public class Genre {
     }
 
     public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+        this.uuid = UUID.randomUUID();
     }
 
     public Long getId() {
