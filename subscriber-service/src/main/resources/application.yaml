@@ -23,3 +23,9 @@ management:
 
 server:
   port: 8083
+
+grpc:
+  port: 1231
+  music:
+    host: localhost
+    port: 1232

@@ -6,13 +6,16 @@ import com.loplyy.subscriber_service.dto.request.subscriber.UpdateSubscriberProf
 import com.loplyy.subscriber_service.dto.response.subscriber.GetSubscriberIdByUId;
 import com.loplyy.subscriber_service.entity.Subscriber;
 import com.loplyy.subscriber_service.repository.SubscriberRepository;
+import com.lopply.subscriber.SubscriberServiceGrpc;
+import com.lopply.subscriber.Subscriberservice;
+import io.grpc.stub.StreamObserver;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
 @Service
-public class SubscriberServiceImpl {
+public class SubscriberServiceImpl extends SubscriberServiceGrpc.SubscriberServiceImplBase {
 
     private final SubscriberRepository subscriberRepository;
     private final AuthServiceClient authServiceClient;
@@ -47,14 +50,20 @@ public class SubscriberServiceImpl {
                 });
     }
 
-    public Mono<GetSubscriberIdByUId> getSubscriberIdByUId(String uid) {
-        return subscriberRepository.getSubscriberIdByUuid(uid)
+    @Override
+    public void getSubscriberIdByUId(Subscriberservice.SubscriberUIdRequest request, StreamObserver<Subscriberservice.Subscriber> responseObserver) {
+        subscriberRepository.getSubscriberIdByUuid(request.getUid())
                 .switchIfEmpty(Mono.error(new RuntimeException("Subscriber not found")))
-                .map(subscriber -> new GetSubscriberIdByUId(
-                        subscriber.getId(),
-                        subscriber.getAccountId(),
-                        subscriber.getUuid(),
-                        subscriber.getFirstName(),
-                        subscriber.getLastName()));
+                .map(subscriber -> Subscriberservice.Subscriber.newBuilder()
+                        .setId(subscriber.getId())
+                        .build()).subscribe(
+                        resp -> {
+                            responseObserver.onNext(resp);
+                            responseObserver.onCompleted();
+                        },
+                        error -> {
+                            responseObserver.onError(error);
+                        }
+                );
     }
 }

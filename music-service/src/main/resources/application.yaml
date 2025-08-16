@@ -14,3 +14,6 @@ springdoc:
 
 server:
   port: 8084
+
+grpc:
+  port: 1232

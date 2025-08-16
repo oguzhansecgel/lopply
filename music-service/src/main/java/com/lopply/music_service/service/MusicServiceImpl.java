@@ -1,18 +1,22 @@
 package com.lopply.music_service.service;
 
+import com.lopply.music.MusicServiceGrpc;
+import com.lopply.music.Musicservice;
 import com.lopply.music_service.dto.request.music.CreateMusicRequest;
 import com.lopply.music_service.dto.response.music.GetByUIdMusic;
 import com.lopply.music_service.entity.Music;
 import com.lopply.music_service.repository.MusicRepository;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
 import java.util.UUID;
 
 @Service
-public class MusicServiceImpl {
+public class MusicServiceImpl extends MusicServiceGrpc.MusicServiceImplBase {
 
     private final MusicRepository musicRepository;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -50,5 +54,15 @@ public class MusicServiceImpl {
                                 music.getDuration(),
                                 music.getLanguage()
                         ));
+    }
+
+    @Override
+    public void getMusicByUId(Musicservice.MusicUIdRequest request, StreamObserver<Musicservice.MusicById> responseObserver) {
+        logger.info("Incoming get music request {}", request);
+
+        musicRepository.findByUuid(UUID.fromString(request.getUid()))
+                .switchIfEmpty(Mono.error(new StatusRuntimeException(Status.NOT_FOUND.withDescription("Music Not Found"))))
+                .map(music -> Musicservice.MusicById.newBuilder().setId(music.getId()).build())
+                .subscribe(responseObserver::onNext, responseObserver::onError, responseObserver::onCompleted);
     }
 }

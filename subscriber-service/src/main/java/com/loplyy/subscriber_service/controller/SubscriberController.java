@@ -5,6 +5,9 @@ import com.loplyy.subscriber_service.dto.request.subscriber.CreateSubscriberProf
 import com.loplyy.subscriber_service.dto.request.subscriber.UpdateSubscriberProfileRequest;
 import com.loplyy.subscriber_service.dto.response.subscriber.GetSubscriberIdByUId;
 import com.loplyy.subscriber_service.service.SubscriberServiceImpl;
+import com.lopply.subscriber.Subscriberservice;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,23 +32,19 @@ public class SubscriberController {
         this.subscriberService = subscriberService;
     }
 
-    @GetMapping("/get-subscriber-id-by-uid")
-    public Mono<ResponseEntity<GetSubscriberIdByUId>> getSubscriberIdByUId(
-            @RequestParam("uid") String uid, ServerWebExchange exchange) {
-
-        String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
-        }
-
-        return subscriberService.getSubscriberIdByUId(uid)
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    logger.error("/api/subscribers/get-subscriber-id-by-uid {}", e.getMessage());
-                    return Mono.just(ResponseEntity.badRequest().build());
-                });
-    }
+//    @GetMapping("/get-subscriber-id-by-uid")
+//    public Mono<ResponseEntity<GetSubscriberIdByUId>> getSubscriberIdByUId(
+//            @RequestParam("uid") String uid, ServerWebExchange exchange) {
+//
+//        String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
+//
+//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//            return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+//        }
+//
+//        return subscriberService.getSubscriberIdByUId(Subscriberservice.SubscriberUIdRequest.newBuilder()
+//                .setUid(uid).build());
+//    }
 
     @PostMapping("/create-subscriber-profile")
     public Mono<ResponseEntity<Void>> createSubscriberProfile(@RequestBody CreateSubscriberProfileRequest request, ServerWebExchange exchange) {

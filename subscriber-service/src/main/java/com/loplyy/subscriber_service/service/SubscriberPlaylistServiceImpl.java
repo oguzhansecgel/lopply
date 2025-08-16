@@ -13,6 +13,7 @@ import com.loplyy.subscriber_service.entity.SubscriberPlaylistItem;
 import com.loplyy.subscriber_service.repository.SubscriberPlaylistItemRepository;
 import com.loplyy.subscriber_service.repository.SubscriberPlaylistRepository;
 import com.loplyy.subscriber_service.repository.SubscriberRepository;
+import com.lopply.music.Musicservice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -103,18 +104,17 @@ public class SubscriberPlaylistServiceImpl {
     public Mono<Void> addPlaylistItem(CreatePlaylistItemRequest request) {
         logger.info("addPlaylistItem incoming request {}, {}", request.getPlaylist_uid(), request.getMusic_uid());
 
-        return musicServiceClient.getByUIdMusic(request.getMusic_uid())
-                .flatMap(getByUIdMusic ->
-                        subscriberPlaylistRepository.getPlaylistIdByUuid(UUID.fromString(request.getPlaylist_uid()))
-                                .next()
-                                .switchIfEmpty(Mono.error(new RuntimeException("Playlist not found")))
-                                .flatMap(playlistId -> {
-                                    SubscriberPlaylistItem item = new SubscriberPlaylistItem();
-                                    item.setPlaylistId(playlistId.getId());
-                                    item.setMusicId(getByUIdMusic.getId());
-                                    return subscriberPlaylistItemRepository.save(item);
-                                })
-                )
+        Musicservice.MusicById musicById = musicServiceClient.getMusicById(request.getMusic_uid());
+
+        return subscriberPlaylistRepository.getPlaylistIdByUuid(UUID.fromString(request.getPlaylist_uid()))
+                .next()
+                .switchIfEmpty(Mono.error(new RuntimeException("Playlist not found")))
+                .flatMap(playlistId -> {
+                    SubscriberPlaylistItem item = new SubscriberPlaylistItem();
+                    item.setPlaylistId(playlistId.getId());
+                    item.setMusicId(musicById.getId());
+                    return subscriberPlaylistItemRepository.save(item);
+                })
                 .doOnSuccess(v -> logger.info("Playlist item successfully added"))
                 .doOnError(e -> logger.error("Failed to add playlist item", e))
                 .then();

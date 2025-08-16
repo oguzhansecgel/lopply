@@ -1,0 +1,9 @@
+[submodule "loppy-proto"]
+	path = loppy-proto
+	url = https://github.com/oguzhansecgel/loppy-proto.git
+[submodule "subscriber-service/loppy-proto"]
+	path = subscriber-service/loppy-proto
+	url = https://github.com/oguzhansecgel/loppy-proto.git
+[submodule "music-service/loppy-proto"]
+	path = music-service/loppy-proto
+	url = https://github.com/oguzhansecgel/loppy-proto.git

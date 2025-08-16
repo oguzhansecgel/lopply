@@ -13,7 +13,7 @@ public class SubscriberPlaylist {
     @Id
     private long id;
     @Column("uuid")
-    private UUID uuid;
+    private UUID uuid =UUID.randomUUID();
     @Column("subscriber_id")
     private long subscriberId;
     @Column("is_public")
