@@ -38,7 +38,7 @@ public class MusicController {
 
     @PostMapping("/create")
     public Mono<ApiResponse<Void>> createMusic(@RequestBody CreateMusicRequest request, ServerWebExchange exchange) {
-        return musicService.createMusic(request)
+        return musicService.createMusicWithZip(request)
                 .map(ApiResponse::success)
                 .onErrorResume(e ->
                         {

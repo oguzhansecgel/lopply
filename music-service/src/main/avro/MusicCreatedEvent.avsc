@@ -1,0 +1,13 @@
+{
+  "type": "record",
+  "name": "MusicCreatedEvent",
+  "namespace": "com.loplyy.events",
+  "fields": [
+    {"name": "uuid", "type": "string"},
+    {"name": "title", "type": "string"},
+    {"name": "albumId", "type": "long"},
+    {"name": "artistId", "type": "long"},
+    {"name": "genreId", "type": "long"},
+    {"name": "duration", "type": "int"}
+  ]
+}

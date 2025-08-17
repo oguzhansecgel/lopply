@@ -6,6 +6,7 @@ import com.lopply.music_service.repository.AlbumRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -16,6 +17,10 @@ public class AlbumServiceImpl {
 
     public AlbumServiceImpl(AlbumRepository albumRepository) {
         this.albumRepository = albumRepository;
+    }
+
+    public Flux<Album> findAll() {
+        return albumRepository.findAll();
     }
 
     public Mono<Album> getAlbumByUId(String uid) {

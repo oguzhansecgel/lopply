@@ -1,5 +1,6 @@
 package com.loplyy.subscriber_service.config;
 
+import com.loplyy.subscriber_service.grpc.SubscriberGrpcService;
 import com.loplyy.subscriber_service.service.SubscriberServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -17,7 +18,7 @@ public class GrpcConfig {
     private int port;
 
     @Bean
-    public Server grpcServer(SubscriberServiceImpl subscriberService) throws IOException {
+    public Server grpcServer(SubscriberGrpcService subscriberService) throws IOException {
         Server server = ServerBuilder.forPort(port)
                 .addService(subscriberService)
                 .addService(ProtoReflectionService.newInstance())

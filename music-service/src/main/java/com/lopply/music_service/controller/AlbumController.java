@@ -3,13 +3,12 @@ package com.lopply.music_service.controller;
 import com.lopply.music_service.dto.request.album.CreateAlbumRequest;
 import com.lopply.music_service.entity.Album;
 import com.lopply.music_service.service.AlbumServiceImpl;
-import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/album")
@@ -20,6 +19,13 @@ public class AlbumController {
 
     public AlbumController(AlbumServiceImpl albumService) {
         this.albumService = albumService;
+    }
+
+    @GetMapping("/get-all")
+    public Mono<ApiResponse<List<Album>>> getAll() {
+        return albumService.findAll()
+                .collectList()
+                .map(ApiResponse::success);
     }
 
     @GetMapping("/get-by-uid")

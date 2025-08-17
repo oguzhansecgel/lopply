@@ -1,7 +1,7 @@
 package com.loplyy.subscriber_service.controller;
 
 import com.loplyy.subscriber_service.config.JwtService;
-import com.loplyy.subscriber_service.dto.request.playlist.CreatePlaylistItemRequest;
+import com.loplyy.subscriber_service.dto.request.playlist.PlaylistItemRequest;
 import com.loplyy.subscriber_service.dto.request.playlist.CreatePlaylistRequest;
 import com.loplyy.subscriber_service.dto.response.playlist.GetPlaylistWithItem;
 import com.loplyy.subscriber_service.dto.response.playlist.GetSubscriberPlaylistResponse;
@@ -24,18 +24,10 @@ public class SubscriberPlaylistController {
     private final SubscriberPlaylistServiceImpl subscriberPlaylistService;
     private final JwtService jwtService;
     private final Logger logger = LoggerFactory.getLogger(SubscriberPlaylistController.class);
+
     public SubscriberPlaylistController(SubscriberPlaylistServiceImpl subscriberPlaylistService, JwtService jwtService) {
         this.subscriberPlaylistService = subscriberPlaylistService;
         this.jwtService = jwtService;
-    }
-
-    @GetMapping("/test")
-    public Mono<ResponseEntity<Flux<GetSubscriberPlaylistResponse>>> getSubscriberPlaylist() {
-        return Mono.just(
-                ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(subscriberPlaylistService.getAllSubscriberPlaylists())
-        );
     }
 
     @GetMapping("/playlist-with-item")
@@ -46,10 +38,11 @@ public class SubscriberPlaylistController {
         );
     }
 
-//    @DeleteMapping("/delete-playlist")
-//    public Mono<ResponseEntity<Mono<Void>>> deletePlaylist(@RequestParam("playlistUId") String playlistUId, ServerWebExchange exchange) {
-//
-//    }
+    @DeleteMapping("/delete-playlist")
+    public Mono<ApiResponse<Void>> deletePlaylist(@RequestParam("playlistUId") String playlistUId, ServerWebExchange exchange) {
+        return subscriberPlaylistService.deleteSubscriberPlaylist(playlistUId)
+                .map(ApiResponse::success);
+    }
 
     @PostMapping("/create-playlist")
     public Mono<ResponseEntity<Void>> createPlaylist(@RequestBody CreatePlaylistRequest createPlaylistRequest, ServerWebExchange serverWebExchange) {
@@ -75,8 +68,14 @@ public class SubscriberPlaylistController {
     }
 
     @PostMapping("/create-playlist-item")
-    public Mono<ResponseEntity<Void>> createPlaylistItem(@RequestBody CreatePlaylistItemRequest createPlaylistItemRequest, ServerWebExchange serverWebExchange) {
-        return subscriberPlaylistService.addPlaylistItem(createPlaylistItemRequest)
-                .then(Mono.just(ResponseEntity.ok().build()));
+    public Mono<ApiResponse<Void>> createPlaylistItem(@RequestBody PlaylistItemRequest playlistItemRequest, ServerWebExchange serverWebExchange) {
+        return subscriberPlaylistService.addPlaylistItem(playlistItemRequest)
+                .then(Mono.just(ApiResponse.success(null)));
+    }
+
+    @DeleteMapping("/remove-playlist-item")
+    public Mono<ApiResponse<Void>> removePlaylistItem(@RequestBody PlaylistItemRequest playlistItemRequest){
+        return subscriberPlaylistService.removePlaylistItem(playlistItemRequest.getMusic_uid(),playlistItemRequest.getPlaylist_uid())
+                .then(Mono.just(ApiResponse.success(null)));
     }
 }

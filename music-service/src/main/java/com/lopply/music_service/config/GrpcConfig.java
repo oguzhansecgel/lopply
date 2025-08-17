@@ -1,5 +1,7 @@
 package com.lopply.music_service.config;
 
+import com.lopply.music.MusicServiceGrpc;
+import com.lopply.music_service.grpc.MusicGrpcService;
 import com.lopply.music_service.service.MusicServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -17,7 +19,7 @@ public class GrpcConfig {
     private int port;
 
     @Bean
-    public Server grpcServer(MusicServiceImpl musicService) throws IOException {
+    public Server grpcServer(MusicGrpcService musicService) throws IOException {
         Server server = ServerBuilder.forPort(port)
                 .addService(musicService)
                 .addService(ProtoReflectionService.newInstance())

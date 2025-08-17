@@ -10,7 +10,7 @@ import java.util.UUID;
 public class Music {
     @Id
     private Long id;
-    private UUID uuid;
+    private UUID uuid = UUID.randomUUID();
     private String title;
     @Column("album_id")
     private Long albumId;

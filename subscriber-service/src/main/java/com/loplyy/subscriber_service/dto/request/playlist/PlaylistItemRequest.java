@@ -1,15 +1,15 @@
 package com.loplyy.subscriber_service.dto.request.playlist;
 
-public class CreatePlaylistItemRequest {
+public class PlaylistItemRequest {
     private String playlist_uid;
     private String music_uid;
 
-    public CreatePlaylistItemRequest(String music_uid, String playlist_uid) {
+    public PlaylistItemRequest(String music_uid, String playlist_uid) {
         this.music_uid = music_uid;
         this.playlist_uid = playlist_uid;
     }
 
-    public CreatePlaylistItemRequest() {
+    public PlaylistItemRequest() {
     }
 
     public String getPlaylist_uid() {

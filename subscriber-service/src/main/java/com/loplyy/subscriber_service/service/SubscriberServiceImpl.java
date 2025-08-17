@@ -8,6 +8,8 @@ import com.loplyy.subscriber_service.entity.Subscriber;
 import com.loplyy.subscriber_service.repository.SubscriberRepository;
 import com.lopply.subscriber.SubscriberServiceGrpc;
 import com.lopply.subscriber.Subscriberservice;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -15,7 +17,7 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @Service
-public class SubscriberServiceImpl extends SubscriberServiceGrpc.SubscriberServiceImplBase {
+public class SubscriberServiceImpl {
 
     private final SubscriberRepository subscriberRepository;
     private final AuthServiceClient authServiceClient;
@@ -50,20 +52,14 @@ public class SubscriberServiceImpl extends SubscriberServiceGrpc.SubscriberServi
                 });
     }
 
-    @Override
-    public void getSubscriberIdByUId(Subscriberservice.SubscriberUIdRequest request, StreamObserver<Subscriberservice.Subscriber> responseObserver) {
-        subscriberRepository.getSubscriberIdByUuid(request.getUid())
-                .switchIfEmpty(Mono.error(new RuntimeException("Subscriber not found")))
-                .map(subscriber -> Subscriberservice.Subscriber.newBuilder()
-                        .setId(subscriber.getId())
-                        .build()).subscribe(
-                        resp -> {
-                            responseObserver.onNext(resp);
-                            responseObserver.onCompleted();
-                        },
-                        error -> {
-                            responseObserver.onError(error);
-                        }
-                );
+    public Mono<GetSubscriberIdByUId> getSubscriberIdByUId(String uid) {
+        return subscriberRepository.getSubscriberIdByUuid(uid)
+                .switchIfEmpty(Mono.error(new StatusRuntimeException(Status.NOT_FOUND.withDescription("Subscriber not found"))))
+                .map(subscriber -> new GetSubscriberIdByUId(
+                        subscriber.getId(),
+                        subscriber.getAccountId(),
+                        subscriber.getUuid(),
+                        subscriber.getFirstName(),
+                        subscriber.getLastName()));
     }
 }

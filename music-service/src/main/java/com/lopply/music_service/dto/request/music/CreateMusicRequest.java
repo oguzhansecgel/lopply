@@ -5,22 +5,22 @@ import org.springframework.data.relational.core.mapping.Column;
 public class CreateMusicRequest {
     private String title;
     @Column("album_id")
-    private Long albumId;
+    private String albumUId;
     @Column("artist_id")
-    private Long artistId;
+    private String artistUId;
     @Column("genre_id")
-    private Long genreId;
+    private String genreUId;
     private Integer duration; // saniye
     private String language;
 
     public CreateMusicRequest() {
     }
 
-    public CreateMusicRequest(String title, Long albumId, Long artistId, Long genreId, Integer duration, String language) {
+    public CreateMusicRequest(String title, String albumUId, String artistUId, String genreUId, Integer duration, String language) {
         this.title = title;
-        this.albumId = albumId;
-        this.artistId = artistId;
-        this.genreId = genreId;
+        this.albumUId = albumUId;
+        this.artistUId = artistUId;
+        this.genreUId = genreUId;
         this.duration = duration;
         this.language = language;
     }
@@ -33,28 +33,28 @@ public class CreateMusicRequest {
         this.title = title;
     }
 
-    public Long getAlbumId() {
-        return albumId;
+    public String getAlbumUId() {
+        return albumUId;
     }
 
-    public void setAlbumId(Long albumId) {
-        this.albumId = albumId;
+    public void setAlbumUId(String albumUId) {
+        this.albumUId = albumUId;
     }
 
-    public Long getArtistId() {
-        return artistId;
+    public String getArtistUId() {
+        return artistUId;
     }
 
-    public void setArtistId(Long artistId) {
-        this.artistId = artistId;
+    public void setArtistUId(String artistUId) {
+        this.artistUId = artistUId;
     }
 
-    public Long getGenreId() {
-        return genreId;
+    public String getGenreUId() {
+        return genreUId;
     }
 
-    public void setGenreId(Long genreId) {
-        this.genreId = genreId;
+    public void setGenreUId(String genreUId) {
+        this.genreUId = genreUId;
     }
 
     public Integer getDuration() {

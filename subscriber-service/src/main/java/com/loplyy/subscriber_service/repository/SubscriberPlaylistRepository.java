@@ -13,6 +13,6 @@ import java.util.UUID;
 @Repository
 public interface SubscriberPlaylistRepository extends ReactiveCrudRepository<SubscriberPlaylist,Long> {
 
-    Flux<SubscriberPlaylist> getPlaylistIdByUuid(UUID uuid);
+    Mono<SubscriberPlaylist> getPlaylistIdByUuid(UUID uuid);
     Mono<SubscriberPlaylist> save(CreatePlaylistRequest  request);
 }
