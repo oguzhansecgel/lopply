@@ -1,0 +1,52 @@
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: loppy-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - common
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    container_name: loppy-kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://localhost:9092
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_LISTENER_NAMES: INSIDE,OUTSIDE
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_MAX_MESSAGE_SIZE: 104857600
+    networks:
+      - common
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus-rent-a-car
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - common
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana-rent-a-car
+    ports:
+      - "3000:3000"
+    networks:
+      - common
+networks:
+  common:
+    driver: bridge
