@@ -21,6 +21,7 @@ public class GenreServiceImpl {
     }
 
     public Flux<GetAllGenreResponse> getAllGenreResponse(){
+        logger.info("getAllGenreResponse");
         return genreRepository.findAll()
                 .map(genre ->
                     new GetAllGenreResponse(
