@@ -3,7 +3,9 @@ package com.lopply.music_service.service;
 import com.lopply.music.MusicServiceGrpc;
 import com.lopply.music.Musicservice;
 import com.lopply.music_service.dto.request.music.CreateMusicRequest;
+import com.lopply.music_service.dto.response.music.GetAllArtistMusic;
 import com.lopply.music_service.dto.response.music.GetByUIdMusic;
+import com.lopply.music_service.dto.response.music.GetMusicWithArtist;
 import com.lopply.music_service.entity.Album;
 import com.lopply.music_service.entity.Artist;
 import com.lopply.music_service.entity.Genre;
@@ -18,6 +20,7 @@ import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -113,4 +116,45 @@ public class MusicServiceImpl {
                         ));
     }
 
+    public Mono<GetMusicWithArtist> getMusicWithArtist(String musicUId){
+        return musicRepository.findByUuid(UUID.fromString(musicUId))
+                .flatMap(music ->
+                        Mono.zip(
+                                artistRepository.findById(music.getArtistId()),
+                                musicRepository.findByMusicWithArtist(music.getId())
+                        ).map(tuple -> {
+                            var artist = tuple.getT1();
+                            var music1 = tuple.getT2();
+
+                            return new GetMusicWithArtist(
+                                    artist.getUuid().toString(),
+                                    artist.getName(),
+                                    artist.getBio(),
+                                    artist.getCountry(),
+                                    music1.getId(),
+                                    music1.getUuid().toString(),
+                                    music1.getTitle(),
+                                    music1.getGenreId(),
+                                    music1.getDuration(),
+                                    music1.getLanguage()
+                            );
+                        })
+                );
+    }
+
+    public Flux<GetAllArtistMusic> getAllArtistMusic(String artistUId) {
+        return artistRepository.findByUuid(artistUId)
+                .flatMapMany(artist ->
+                        musicRepository.findAllArtistMusic(artist.getId())
+                                .map(music ->
+                                        new GetAllArtistMusic(
+                                                artist.getUuid().toString(),
+                                                artist.getName(),
+                                                music.getId(),
+                                                music.getUuid().toString(),
+                                                music.getTitle(),
+                                                music.getGenreId(),
+                                                music.getLanguage()
+                                        )));
+    }
 }
